@@ -1,0 +1,13 @@
+node_modules
+package-lock.json
+*.log
+*.gz
+
+npm-debug.log
+
+.DS_Store
+
+dist
+
+# Keep environment variables out of version control
+.env

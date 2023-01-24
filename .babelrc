@@ -1,0 +1,26 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "current"
+                }
+            }
+        ]
+    ],
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "alias": {
+                    "@src": "./src",
+                    "@helpers": "./src/helpers",
+                    "@models": "./src/models",
+                    "@modules": "./src/modules"
+                }
+            }
+        ]
+    ],
+    "compact": true
+}
