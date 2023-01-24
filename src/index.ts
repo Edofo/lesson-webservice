@@ -5,7 +5,9 @@ import morgan from "morgan";
 
 import dotenv from "dotenv";
 
-import { UsersRouter } from "./modules/app";
+import dbo from "./database/database";
+
+import { UsersRouter, VideoGamesRouter } from "./modules/app";
 
 dotenv.config();
 
@@ -17,8 +19,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("dev"));
 
+dbo.connectToServer((err: any) => {
+    if (err) {
+        console.log(err);
+    }
+});
+
 // routes
 app.use("/api/users", UsersRouter);
+app.use("/api/videogames", VideoGamesRouter);
 
 app.get("*", (req: Request, res: Response) => {
     return res.status(404).json({
