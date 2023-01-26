@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 import dbo from "./database/database";
 
-import { UsersRouter, VideoGamesRouter } from "./modules/app";
+import AppRouter from "./modules/app";
 
 dotenv.config();
 
@@ -19,15 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("dev"));
 
-dbo.connectToServer((err: any) => {
-    if (err) {
-        console.log(err);
-    }
-});
+dbo.connectToServer();
+
+process.on("SIGINT", () => {
+    dbo.closeConnection();
+})
 
 // routes
-app.use("/api/users", UsersRouter);
-app.use("/api/videogames", VideoGamesRouter);
+app.use("/api", AppRouter);
 
 app.get("*", (req: Request, res: Response) => {
     return res.status(404).json({

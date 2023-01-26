@@ -1,4 +1,11 @@
-import UsersRouter from "./users/users.module";
-import VideoGamesRouter from "./videogames/videogames.module";
+import express, { Router } from "express";
 
-export { UsersRouter, VideoGamesRouter };
+import ClassesRouter from "./classes/classes.module";
+import StudentsRouter from "./students/students.module";
+
+const AppRouter: Router = express.Router();
+
+AppRouter.use("/classes", ClassesRouter);
+AppRouter.use("/students", StudentsRouter);
+
+export default AppRouter;

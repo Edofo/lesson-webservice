@@ -1,37 +1,29 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
-// Connect db
-const client = new MongoClient(process.env.DATABASE_URL || "mongodb://localhost:27017/webservice", {});
-
-let dbConnection: any;
+let dbConnection: mongoose.Connection;
 
 const dbo = {
-    connectToServer: (callback: any) => {
-        console.log("Connecting to MongoDB...");
-        client.connect((err, db) => {
-            if (err || !db) {
-                return callback(err);
-            }
+    connectToServer: () => {
+        if(process.env.DATABASE_URL === undefined) {
+            throw new Error("DATABASE_URL is undefined");
+        }
 
-            dbConnection = db.db("lesson-webservice");
-            console.log("Successfully connected to MongoDB.");
+        if(process.env.DATABASE_NAME === undefined) {
+            throw new Error("DATABASE_NAME is undefined");
+        }
 
-            return callback();
-        });
+        console.log("Connecting to MongoDB...");    
+        dbConnection = mongoose.createConnection("mongodb://127.0.0.1:27017/databaseName", {});
+
+        console.log("Successfully connected to MongoDB.");
     },
 
     getDb: () => {
         return dbConnection;
     },
 
-    closeConnection: (callback: any) => {
-        client.close((err) => {
-            if (err) {
-                return callback(err);
-            }
-
-            return callback();
-        });
+    closeConnection: async () => {
+        await dbConnection.close();
     },
 };
 

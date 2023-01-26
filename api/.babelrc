@@ -10,17 +10,7 @@
         ]
     ],
     "plugins": [
-        [
-            "module-resolver",
-            {
-                "alias": {
-                    "@src": "./src",
-                    "@helpers": "./src/helpers",
-                    "@models": "./src/models",
-                    "@modules": "./src/modules"
-                }
-            }
-        ]
+        ["tsconfig-paths-module-resolver"]
     ],
     "compact": true
 }
