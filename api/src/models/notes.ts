@@ -18,6 +18,6 @@ const NotesSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Students",
     },
-})
+});
 
-export default mongoose.model("Notes", NotesSchema);
+export default NotesSchema;

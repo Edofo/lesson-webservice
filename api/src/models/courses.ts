@@ -10,6 +10,6 @@ const CoursesSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-})
+});
 
-export default mongoose.model("Courses", CoursesSchema);
+export default CoursesSchema;

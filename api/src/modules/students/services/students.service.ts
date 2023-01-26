@@ -8,13 +8,11 @@ const getModel = () => {
     const db = dbo.getDb();
     const model = db.model("Students", StudentsSchema);
     return model;
-}
+};
 
 const StudentsService = {
-    
     async getAllStudents(req: Request, res: Response): Promise<string | any> {
         try {
-            
             const model = getModel();
 
             const students = await model.find();
@@ -24,7 +22,6 @@ const StudentsService = {
                 message: "Students retrieved successfully",
                 data: students,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -36,7 +33,6 @@ const StudentsService = {
 
     async getStudentsById(req: Request, res: Response): Promise<string | any> {
         try {
-            
             const model = getModel();
 
             const students = await model.findById(req.params.id);
@@ -46,7 +42,6 @@ const StudentsService = {
                 message: "Students retrieved successfully",
                 data: students,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -55,19 +50,18 @@ const StudentsService = {
             });
         }
     },
-    
+
     async createStudents(req: Request, res: Response): Promise<string | any> {
         try {
-
             // check if all required fields are present
-            if(!req.body.name) {
+            if (!req.body.name || !req.body.email || !req.body.lastname) {
                 return res.status(400).json({
                     success: false,
                     message: "Missing required fields",
                     data: [],
                 });
             }
-            
+
             const model = getModel();
 
             const students = await model.create(req.body);
@@ -77,7 +71,6 @@ const StudentsService = {
                 message: "Students created successfully",
                 data: students,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -89,17 +82,15 @@ const StudentsService = {
 
     async updateStudents(req: Request, res: Response): Promise<string | any> {
         try {
-
             const model = getModel();
 
-            const students = await model.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body})
+            const students = await model.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
 
             return res.status(200).json({
                 success: true,
                 message: "Students updated successfully",
                 data: students,
             });
-
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -111,7 +102,6 @@ const StudentsService = {
 
     async deleteStudents(req: Request, res: Response): Promise<string | any> {
         try {
-
             const model = getModel();
 
             const students = await model.deleteOne({ _id: new ObjectId(req.params.id) });
@@ -121,7 +111,6 @@ const StudentsService = {
                 message: "Students deleted successfully",
                 data: students,
             });
-
         } catch (error: any) {
             return res.status(500).json({
                 success: false,

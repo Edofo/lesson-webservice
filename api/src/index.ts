@@ -6,7 +6,6 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 
 import dbo from "./database/database";
-
 import AppRouter from "./modules/app";
 
 dotenv.config();
@@ -23,7 +22,7 @@ dbo.connectToServer();
 
 process.on("SIGINT", () => {
     dbo.closeConnection();
-})
+});
 
 // routes
 app.use("/api", AppRouter);

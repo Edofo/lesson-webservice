@@ -1,30 +1,27 @@
 import { Request, Response } from "express";
-
-import ClassesSchema from "../../../models/classes";
-import dbo from "../../../database/database";
 import { ObjectId } from "mongodb";
+
+import NotesSchema from "../../../models/notes";
+import dbo from "../../../database/database";
 
 const getModel = () => {
     const db = dbo.getDb();
-    const model = db.model("Classes", ClassesSchema);
+    const model = db.model("Notes", NotesSchema);
     return model;
-}
+};
 
-const ClassesService = {
-    
-    async getAllClasses(req: Request, res: Response): Promise<string | any> {
+const NotesService = {
+    async getAllNotes(req: Request, res: Response): Promise<string | any> {
         try {
-            
             const model = getModel();
 
-            const classes = await model.find();
+            const notes = await model.find();
 
             return res.status(200).json({
                 success: true,
-                message: "Classes retrieved successfully",
-                data: classes,
+                message: "Notes retrieved successfully",
+                data: notes,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -34,19 +31,17 @@ const ClassesService = {
         }
     },
 
-    async getClassesById(req: Request, res: Response): Promise<string | any> {
+    async getNotesById(req: Request, res: Response): Promise<string | any> {
         try {
-            
             const model = getModel();
 
-            const classes = await model.findById(req.params.id);
+            const notes = await model.findById(req.params.id);
 
             return res.status(200).json({
                 success: true,
-                message: "Classes retrieved successfully",
-                data: classes,
+                message: "Notes retrieved successfully",
+                data: notes,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -55,29 +50,27 @@ const ClassesService = {
             });
         }
     },
-    
-    async createClasses(req: Request, res: Response): Promise<string | any> {
-        try {
 
+    async createNotes(req: Request, res: Response): Promise<string | any> {
+        try {
             // check if all required fields are present
-            if(!req.body.name) {
+            if (!req.body.name) {
                 return res.status(400).json({
                     success: false,
                     message: "Missing required fields",
                     data: [],
                 });
             }
-            
+
             const model = getModel();
 
-            const classes = await model.create(req.body);
+            const notes = await model.create(req.body);
 
             return res.status(200).json({
                 success: true,
-                message: "Classes created successfully",
-                data: classes,
+                message: "Notes created successfully",
+                data: notes,
             });
-        
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -87,19 +80,17 @@ const ClassesService = {
         }
     },
 
-    async updateClasses(req: Request, res: Response): Promise<string | any> {
+    async updateNotes(req: Request, res: Response): Promise<string | any> {
         try {
-
             const model = getModel();
 
-            const classes = await model.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body})
+            const notes = await model.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
 
             return res.status(200).json({
                 success: true,
-                message: "Classes updated successfully",
-                data: classes,
+                message: "Notes updated successfully",
+                data: notes,
             });
-
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -109,19 +100,17 @@ const ClassesService = {
         }
     },
 
-    async deleteClasses(req: Request, res: Response): Promise<string | any> {
+    async deleteNotes(req: Request, res: Response): Promise<string | any> {
         try {
-
             const model = getModel();
 
-            const classes = await model.deleteOne({ _id: new ObjectId(req.params.id) });
+            const notes = await model.deleteOne({ _id: new ObjectId(req.params.id) });
 
             return res.status(200).json({
                 success: true,
-                message: "Classes deleted successfully",
-                data: classes,
+                message: "Notes deleted successfully",
+                data: notes,
             });
-
         } catch (error: any) {
             return res.status(500).json({
                 success: false,
@@ -132,4 +121,4 @@ const ClassesService = {
     },
 };
 
-export default ClassesService;
+export default NotesService;
