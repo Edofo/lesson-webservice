@@ -1,5 +1,5 @@
-const ROUTES = {
+const Routes = {
     HOME: "/",
 };
 
-export default ROUTES;
+export default Routes;

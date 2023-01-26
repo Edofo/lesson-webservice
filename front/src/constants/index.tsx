@@ -1,7 +1,7 @@
-import ROUTES from "./routes";
+import Routes from "./routes";
 
 const Constants = {
-    ROUTES,
+    Routes,
 };
 
 export default Constants;

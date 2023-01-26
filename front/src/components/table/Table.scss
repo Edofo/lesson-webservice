@@ -1,0 +1,40 @@
+.Table {
+    width: 100%;
+    border-spacing: 0;
+    border: 1px solid #00000025;
+    border-radius: 10px;
+    overflow: hidden;
+
+    thead {
+        background-color: #00000025;
+    }
+
+    tbody {
+        tr {
+            display: block;
+            border-bottom: 1px solid #00000025;
+            transition-duration: 0.2s;
+
+            &:hover {
+                background-color: #00000025;
+                transform: scale(1.01);
+            }
+        }
+    }
+
+    th {
+        padding: 15px;
+        text-align: left;
+    }
+
+    td {
+        padding: 15px;
+        text-align: left;
+    }
+
+    tfoot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}

@@ -8,6 +8,8 @@
         "build": "tsc && vite build",
         "preview": "vite preview"
     },
+    "author": "Nolan - Edofo",
+    "license": "ISC",
     "dependencies": {
         "localforage": "^1.10.0",
         "match-sorter": "^6.3.1",
@@ -17,6 +19,7 @@
         "sort-by": "^0.0.2"
     },
     "devDependencies": {
+        "@types/node": "^18.11.18",
         "@types/react": "^18.0.26",
         "@types/react-dom": "^18.0.9",
         "@vitejs/plugin-react": "^3.0.0",

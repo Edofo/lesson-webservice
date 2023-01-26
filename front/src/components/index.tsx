@@ -1,9 +1,9 @@
-import Navbar from "./navbar";
-import Footer from "./footer";
+import Sidebar from "./sidebar";
+import Table from "./table";
 
 const Components = {
-    Navbar,
-    Footer,
+    Sidebar,
+    Table,
 };
 
 export default Components;

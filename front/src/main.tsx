@@ -10,7 +10,7 @@ import "./index.scss";
 
 const router = createBrowserRouter([
     {
-        path: Constants.ROUTES.HOME,
+        path: Constants.Routes.HOME,
         element: <Pages.Home />,
     },
     {
