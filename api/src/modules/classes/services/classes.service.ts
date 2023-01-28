@@ -1,21 +1,18 @@
 import { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
-import ClassesSchema from "../../../models/classes";
-import dbo from "../../../database/database";
-
-const getModel = () => {
-    const db = dbo.getDb();
-    const model = db.model("Classes", ClassesSchema);
-    return model;
-};
+import missingValues from "../../../helpers/missingValues";
+import PrismaDb from "../../../models/prisma";
 
 const ClassesService = {
     async getAllClasses(req: Request, res: Response): Promise<string | any> {
         try {
-            const model = getModel();
-
-            const classes = await model.find();
+            const classes = await PrismaDb.class.findMany({
+                include: {
+                    students: true,
+                    subjects: true,
+                    teacher: true,
+                },
+            });
 
             return res.status(200).json({
                 success: true,
@@ -28,18 +25,27 @@ const ClassesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 
-    async getClassesById(req: Request, res: Response): Promise<string | any> {
+    async getClassByUuid(req: Request, res: Response): Promise<string | any> {
         try {
-            const model = getModel();
-
-            const classes = await model.findById(req.params.id);
+            const classes = await PrismaDb.class.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+                include: {
+                    students: true,
+                    subjects: true,
+                    teacher: true,
+                },
+            });
 
             return res.status(200).json({
                 success: true,
-                message: "Classes retrieved successfully",
+                message: "Class retrieved successfully",
                 data: classes,
             });
         } catch (error: any) {
@@ -48,27 +54,73 @@ const ClassesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 
-    async createClasses(req: Request, res: Response): Promise<string | any> {
+    async createClass(req: Request, res: Response): Promise<string | any> {
         try {
-            // check if all required fields are present
-            if (!req.body.name) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Missing required fields",
-                    data: [],
-                });
+            const acceptedFields = ["name", "teacherUuid"];
+
+            if (missingValues(req, res, acceptedFields) !== true) {
+                return;
             }
 
-            const model = getModel();
-
-            const classes = await model.create(req.body);
+            const classes = await PrismaDb.class.create({
+                data: {
+                    name: req.body.name,
+                    teacherUuid: req.body.teacherUuid,
+                    students: {
+                        connect: req.body.students,
+                    },
+                    subjects: {
+                        connect: req.body.subjects,
+                    },
+                },
+                include: {
+                    students: true,
+                    subjects: true,
+                    teacher: true,
+                },
+            });
 
             return res.status(200).json({
                 success: true,
-                message: "Classes created successfully",
+                message: "Class created successfully",
+                data: classes,
+            });
+        } catch (error: any) {
+            return res.status(500).json({
+                success: false,
+                message: error?.message,
+                data: [],
+            });
+        } finally {
+            await PrismaDb.$disconnect();
+        }
+    },
+
+    async updateClass(req: Request, res: Response): Promise<string | any> {
+        try {
+
+            const classes = await PrismaDb.class.update({
+                where: {
+                    uuid: req.params.uuid,
+                },
+                data: {
+                    ...req.body
+                },
+                include: {
+                    students: true,
+                    subjects: true,
+                    teacher: true,
+                },
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: "Class updated successfully",
                 data: classes,
             });
         } catch (error: any) {
@@ -80,16 +132,18 @@ const ClassesService = {
         }
     },
 
-    async updateClasses(req: Request, res: Response): Promise<string | any> {
+    async deleteClass(req: Request, res: Response): Promise<string | any> {
         try {
-            const model = getModel();
-
-            const classes = await model.updateOne({ _id: new ObjectId(req.params.id) }, { $set: req.body });
+            await PrismaDb.class.delete({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
 
             return res.status(200).json({
                 success: true,
-                message: "Classes updated successfully",
-                data: classes,
+                message: "Class deleted successfully",
+                data: [],
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -97,26 +151,8 @@ const ClassesService = {
                 message: error?.message,
                 data: [],
             });
-        }
-    },
-
-    async deleteClasses(req: Request, res: Response): Promise<string | any> {
-        try {
-            const model = getModel();
-
-            const classes = await model.deleteOne({ _id: new ObjectId(req.params.id) });
-
-            return res.status(200).json({
-                success: true,
-                message: "Classes deleted successfully",
-                data: classes,
-            });
-        } catch (error: any) {
-            return res.status(500).json({
-                success: false,
-                message: error?.message,
-                data: [],
-            });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 };

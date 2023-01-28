@@ -4,22 +4,19 @@ import { ObjectId } from "mongodb";
 import missingValues from "../../../helpers/missingValues";
 import PrismaDb from "../../../models/prisma";
 
-
-const StudentsService = {
-    async getAllStudents(req: Request, res: Response): Promise<string | any> {
+const SubjectsService = {
+    async getAllSubjects(req: Request, res: Response): Promise<string | any> {
         try {
-
-            const students = await PrismaDb.student.findMany({
+            const Subjects = await PrismaDb.subject.findMany({
                 include: {
-                    class: true,
                     grades: true,
-                }
+                },
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Students retrieved successfully",
-                data: students,
+                message: "Subjects retrieved successfully",
+                data: Subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -32,23 +29,21 @@ const StudentsService = {
         }
     },
 
-    async getStudentByUuid(req: Request, res: Response): Promise<string | any> {
+    async getSubjectByUuid(req: Request, res: Response): Promise<string | any> {
         try {
-            
-            const students = await PrismaDb.student.findUnique({
+            const Subjects = await PrismaDb.subject.findUnique({
                 where: {
                     uuid: req.params.uuid,
                 },
                 include: {
-                    class: true,
                     grades: true,
-                }
+                },
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student retrieved successfully",
-                data: students,
+                message: "Subject retrieved successfully",
+                data: Subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -61,32 +56,29 @@ const StudentsService = {
         }
     },
 
-    async createStudent(req: Request, res: Response): Promise<string | any> {
+    async createSubject(req: Request, res: Response): Promise<string | any> {
         try {
-            
-            const acceptedFields = ["name", "email", "password"];
+            const acceptedFields = ["name", "classUuid", "teacherUuid"];
 
             if (missingValues(req, res, acceptedFields) !== true) {
                 return;
-            }                
+            }
 
-            const students = await PrismaDb.student.create({
+            const Subjects = await PrismaDb.subject.create({
                 data: {
                     name: req.body.name,
-                    email: req.body.email,
-                    password: req.body.password,
-                    classUuid: req.body.classUuid || null,
+                    classUuid: req.body.classUuid,
+                    teacherUuid: req.body.teacherUuid,
                 },
                 include: {
-                    class: true,
                     grades: true,
-                }
+                },
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student created successfully",
-                data: students,
+                message: "Subject created successfully",
+                data: Subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -99,26 +91,24 @@ const StudentsService = {
         }
     },
 
-    async updateStudent(req: Request, res: Response): Promise<string | any> {
+    async updateSubject(req: Request, res: Response): Promise<string | any> {
         try {
-
-            const students = await PrismaDb.student.update({
+            const Subjects = await PrismaDb.subject.update({
                 where: {
                     uuid: req.params.uuid,
                 },
                 data: {
-                    ...req.body 
+                    ...req.body,
                 },
                 include: {
-                    class: true,
                     grades: true,
-                }
+                },
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student updated successfully",
-                data: students,
+                message: "Subject updated successfully",
+                data: Subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -131,10 +121,9 @@ const StudentsService = {
         }
     },
 
-    async deleteStudent(req: Request, res: Response): Promise<string | any> {
+    async deleteSubject(req: Request, res: Response): Promise<string | any> {
         try {
-
-            const students = await PrismaDb.student.delete({
+            await PrismaDb.subject.delete({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -142,7 +131,7 @@ const StudentsService = {
 
             return res.status(200).json({
                 success: true,
-                message: "Student deleted successfully",
+                message: "Subject deleted successfully",
                 data: [],
             });
         } catch (error: any) {
@@ -157,4 +146,4 @@ const StudentsService = {
     },
 };
 
-export default StudentsService;
+export default SubjectsService;

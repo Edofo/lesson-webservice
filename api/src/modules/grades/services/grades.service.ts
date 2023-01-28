@@ -1,25 +1,23 @@
 import { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
-import missingValues from "../../../helpers/missingValues";
 import PrismaDb from "../../../models/prisma";
+import missingValues from "../../../helpers/missingValues";
 
-
-const StudentsService = {
-    async getAllStudents(req: Request, res: Response): Promise<string | any> {
+const GradesService = {
+    async getAllGrades(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const students = await PrismaDb.student.findMany({
+            const grades = await PrismaDb.grade.findMany({
                 include: {
-                    class: true,
-                    grades: true,
+                    student: true,
+                    subject: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Students retrieved successfully",
-                data: students,
+                message: "Grades retrieved successfully",
+                data: grades,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -32,23 +30,22 @@ const StudentsService = {
         }
     },
 
-    async getStudentByUuid(req: Request, res: Response): Promise<string | any> {
+    async getGradeByUuid(req: Request, res: Response): Promise<string | any> {
         try {
-            
-            const students = await PrismaDb.student.findUnique({
+            const grades = await PrismaDb.grade.findUnique({
                 where: {
                     uuid: req.params.uuid,
                 },
                 include: {
-                    class: true,
-                    grades: true,
+                    student: true,
+                    subject: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student retrieved successfully",
-                data: students,
+                message: "Grade retrieved successfully",
+                data: grades,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -61,32 +58,33 @@ const StudentsService = {
         }
     },
 
-    async createStudent(req: Request, res: Response): Promise<string | any> {
+    async createGrade(req: Request, res: Response): Promise<string | any> {
         try {
-            
-            const acceptedFields = ["name", "email", "password"];
+
+            const acceptedFields = ["value", "date", "studentUuid", "subjectUuid", "teacherUuid"];
 
             if (missingValues(req, res, acceptedFields) !== true) {
                 return;
-            }                
-
-            const students = await PrismaDb.student.create({
+            }
+        
+            const Grades = await PrismaDb.grade.create({
                 data: {
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: req.body.password,
-                    classUuid: req.body.classUuid || null,
+                    value: req.body.value,
+                    date: req.body.date,
+                    studentUuid: req.body.studentUuid,
+                    subjectUuid: req.body.subjectUuid,
+                    teacherUuid: req.body.teacherUuid,
                 },
                 include: {
-                    class: true,
-                    grades: true,
+                    student: true,
+                    subject: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student created successfully",
-                data: students,
+                message: "Grade created successfully",
+                data: Grades,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -94,31 +92,29 @@ const StudentsService = {
                 message: error?.message,
                 data: [],
             });
-        } finally {
-            await PrismaDb.$disconnect();
         }
     },
 
-    async updateStudent(req: Request, res: Response): Promise<string | any> {
+    async updateGrade(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const students = await PrismaDb.student.update({
+            const Grades = await PrismaDb.grade.update({
                 where: {
                     uuid: req.params.uuid,
                 },
                 data: {
-                    ...req.body 
+                    ...req.body
                 },
                 include: {
-                    class: true,
-                    grades: true,
+                    student: true,
+                    subject: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student updated successfully",
-                data: students,
+                message: "Grade updated successfully",
+                data: Grades,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -126,23 +122,21 @@ const StudentsService = {
                 message: error?.message,
                 data: [],
             });
-        } finally {
-            await PrismaDb.$disconnect();
         }
     },
 
-    async deleteStudent(req: Request, res: Response): Promise<string | any> {
+    async deleteGrade(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const students = await PrismaDb.student.delete({
+            await PrismaDb.grade.delete({
                 where: {
                     uuid: req.params.uuid,
                 },
-            });
+            })
 
             return res.status(200).json({
                 success: true,
-                message: "Student deleted successfully",
+                message: "Grade deleted successfully",
                 data: [],
             });
         } catch (error: any) {
@@ -151,10 +145,8 @@ const StudentsService = {
                 message: error?.message,
                 data: [],
             });
-        } finally {
-            await PrismaDb.$disconnect();
         }
     },
 };
 
-export default StudentsService;
+export default GradesService;
