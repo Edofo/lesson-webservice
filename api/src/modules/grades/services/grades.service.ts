@@ -61,7 +61,7 @@ const GradesService = {
     async createGrade(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const acceptedFields = ["value", "date", "studentUuid", "subjectUuid", "teacherUuid"];
+            const acceptedFields = ["value",  "studentUuid", "subjectUuid", "teacherUuid"];
 
             if (missingValues(req, res, acceptedFields) !== true) {
                 return;
@@ -70,7 +70,7 @@ const GradesService = {
             const Grades = await PrismaDb.grade.create({
                 data: {
                     value: req.body.value,
-                    date: req.body.date,
+                    date: req.body.date || new Date(),
                     studentUuid: req.body.studentUuid,
                     subjectUuid: req.body.subjectUuid,
                     teacherUuid: req.body.teacherUuid,
@@ -92,11 +92,27 @@ const GradesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 
     async updateGrade(req: Request, res: Response): Promise<string | any> {
         try {
+
+            const grade = await PrismaDb.grade.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!grade) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Grade not found",
+                    data: [],
+                });
+            }
 
             const Grades = await PrismaDb.grade.update({
                 where: {
@@ -122,11 +138,27 @@ const GradesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 
     async deleteGrade(req: Request, res: Response): Promise<string | any> {
         try {
+
+            const grade = await PrismaDb.grade.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!grade) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Grade not found",
+                    data: [],
+                });
+            }
 
             await PrismaDb.grade.delete({
                 where: {
@@ -145,6 +177,8 @@ const GradesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 };

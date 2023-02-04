@@ -43,8 +43,8 @@ model Class {
   uuid String @id @default(uuid())
   name String @db.VarChar(255)
 
-  teacherUuid String
-  teacher     Teacher @relation(fields: [teacherUuid], references: [uuid])
+  teacherUuid String?
+  teacher     Teacher? @relation(fields: [teacherUuid], references: [uuid])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,8 +60,8 @@ model Subject {
   classUuid String
   class     Class  @relation(fields: [classUuid], references: [uuid])
 
-  teacherUuid String
-  teacher     Teacher @relation(fields: [teacherUuid], references: [uuid])
+  teacherUuid String?
+  teacher     Teacher? @relation(fields: [teacherUuid], references: [uuid])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

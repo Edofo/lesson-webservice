@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import { ObjectId } from "mongodb";
 
 import missingValues from "../../../helpers/missingValues";
 import PrismaDb from "../../../models/prisma";
-
 
 const StudentsService = {
     async getAllStudents(req: Request, res: Response): Promise<string | any> {
@@ -102,6 +100,21 @@ const StudentsService = {
     async updateStudent(req: Request, res: Response): Promise<string | any> {
         try {
 
+            const student = await PrismaDb.student.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+
+                },
+            });
+
+            if (!student) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found",
+                    data: [],
+                });
+            }
+
             const students = await PrismaDb.student.update({
                 where: {
                     uuid: req.params.uuid,
@@ -134,7 +147,22 @@ const StudentsService = {
     async deleteStudent(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const students = await PrismaDb.student.delete({
+            const student = await PrismaDb.student.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+
+                },
+            });
+
+            if (!student) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found",
+                    data: [],
+                });
+            }
+
+            await PrismaDb.student.delete({
                 where: {
                     uuid: req.params.uuid,
                 },

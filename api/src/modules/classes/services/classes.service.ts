@@ -61,7 +61,7 @@ const ClassesService = {
 
     async createClass(req: Request, res: Response): Promise<string | any> {
         try {
-            const acceptedFields = ["name", "teacherUuid"];
+            const acceptedFields = ["name"];
 
             if (missingValues(req, res, acceptedFields) !== true) {
                 return;
@@ -70,13 +70,7 @@ const ClassesService = {
             const classes = await PrismaDb.class.create({
                 data: {
                     name: req.body.name,
-                    teacherUuid: req.body.teacherUuid,
-                    students: {
-                        connect: req.body.students,
-                    },
-                    subjects: {
-                        connect: req.body.subjects,
-                    },
+                    teacherUuid: req.body.teacherUuid || null,
                 },
                 include: {
                     students: true,
@@ -104,6 +98,20 @@ const ClassesService = {
     async updateClass(req: Request, res: Response): Promise<string | any> {
         try {
 
+            const classExists = await PrismaDb.class.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!classExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Class not found",
+                    data: [],
+                });
+            }
+
             const classes = await PrismaDb.class.update({
                 where: {
                     uuid: req.params.uuid,
@@ -129,11 +137,28 @@ const ClassesService = {
                 message: error?.message,
                 data: [],
             });
+        } finally {
+            await PrismaDb.$disconnect();
         }
     },
 
     async deleteClass(req: Request, res: Response): Promise<string | any> {
         try {
+
+            const classExists = await PrismaDb.class.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!classExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Class not found",
+                    data: [],
+                });
+            }
+
             await PrismaDb.class.delete({
                 where: {
                     uuid: req.params.uuid,

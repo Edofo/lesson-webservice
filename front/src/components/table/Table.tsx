@@ -9,8 +9,6 @@ interface ITable {
 }
 
 const Table = ({ heads, children, pagination }: ITable) => {
-    // create a pagination component
-
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
