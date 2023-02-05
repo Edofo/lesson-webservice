@@ -6,7 +6,7 @@
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/index.js",
-        "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+        "dev": "nodemon --watch src -e js,ts,json --exec \"ts-node src/index.ts\"",
         "format": "prettier --write \"./**/*.ts\"",
         "reset": "npx prisma migrate reset --force",
         "migrate": "npx prisma migrate dev --name init",
@@ -22,7 +22,6 @@
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
         "lodash": "^4.17.21",
-        "mongoose": "^6.9.0",
         "morgan": "^1.10.0"
     },
     "devDependencies": {
@@ -36,9 +35,9 @@
         "@types/lodash": "^4.14.191",
         "@types/morgan": "^1.9.4",
         "@types/node": "^18.11.18",
-        "concurrently": "^7.6.0",
         "nodemon": "^2.0.20",
         "prisma": "^4.9.0",
+        "ts-node": "^10.9.1",
         "typescript": "^4.9.4"
     }
 }
