@@ -31,11 +31,15 @@ const ClassesService = {
         }
     },
 
-    async getClassesById(req: Request, res: Response): Promise<string | any> {
+    async getClassById(req: Request, res: Response): Promise<string | any> {
         try {
             const model = getModel();
 
-            const classes = await model.findById(req.params.id);
+            const id = new ObjectId(req.params.id);
+
+            console.log(id);
+
+            const classes = await model.findById(id);
 
             return res.status(200).json({
                 success: true,
@@ -51,7 +55,7 @@ const ClassesService = {
         }
     },
 
-    async createClasses(req: Request, res: Response): Promise<string | any> {
+    async createClass(req: Request, res: Response): Promise<string | any> {
         try {
             // check if all required fields are present
             if (!req.body.name) {
@@ -80,7 +84,7 @@ const ClassesService = {
         }
     },
 
-    async updateClasses(req: Request, res: Response): Promise<string | any> {
+    async updateClass(req: Request, res: Response): Promise<string | any> {
         try {
             const model = getModel();
 
@@ -100,7 +104,7 @@ const ClassesService = {
         }
     },
 
-    async deleteClasses(req: Request, res: Response): Promise<string | any> {
+    async deleteClass(req: Request, res: Response): Promise<string | any> {
         try {
             const model = getModel();
 

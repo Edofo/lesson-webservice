@@ -4,9 +4,9 @@ import ClassesService from "../services/classes.service";
 const ClassesRouter: Router = express.Router();
 
 ClassesRouter.get("/", ClassesService.getAllClasses);
-ClassesRouter.get("/:id", ClassesService.getClassesById);
-ClassesRouter.post("/", ClassesService.createClasses);
-ClassesRouter.put("/:id", ClassesService.updateClasses);
-ClassesRouter.delete("/:id", ClassesService.deleteClasses);
+ClassesRouter.get("/:id", ClassesService.getClassById);
+ClassesRouter.post("/", ClassesService.createClass);
+ClassesRouter.put("/:id", ClassesService.updateClass);
+ClassesRouter.delete("/:id", ClassesService.deleteClass);
 
 export default ClassesRouter;
