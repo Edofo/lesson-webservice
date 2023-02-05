@@ -7,7 +7,7 @@ import PrismaDb from "../../../models/prisma";
 const SubjectsService = {
     async getAllSubjects(req: Request, res: Response): Promise<string | any> {
         try {
-            const Subjects = await PrismaDb.subject.findMany({
+            const subjects = await PrismaDb.subject.findMany({
                 include: {
                     grades: true,
                 },
@@ -16,7 +16,7 @@ const SubjectsService = {
             return res.status(200).json({
                 success: true,
                 message: "Subjects retrieved successfully",
-                data: Subjects,
+                data: subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -31,7 +31,7 @@ const SubjectsService = {
 
     async getSubjectByUuid(req: Request, res: Response): Promise<string | any> {
         try {
-            const Subjects = await PrismaDb.subject.findUnique({
+            const subject = await PrismaDb.subject.findUnique({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -43,7 +43,7 @@ const SubjectsService = {
             return res.status(200).json({
                 success: true,
                 message: "Subject retrieved successfully",
-                data: Subjects,
+                data: subject,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -64,7 +64,37 @@ const SubjectsService = {
                 return;
             }
 
-            const Subjects = await PrismaDb.subject.create({
+            // Check if class exists
+            const classExists = await PrismaDb.class.findUnique({
+                where: {
+                    uuid: req.body.classUuid,
+                },
+            });
+
+            if (!classExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Class not found",
+                    data: [],
+                });
+            }
+
+            // Check if teacher exists
+            const teacherExists = await PrismaDb.teacher.findUnique({
+                where: {
+                    uuid: req.body.teacherUuid,
+                },
+            });
+
+            if (!teacherExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Teacher not found",
+                    data: [],
+                });
+            }
+
+            const subjects = await PrismaDb.subject.create({
                 data: {
                     name: req.body.name,
                     classUuid: req.body.classUuid,
@@ -78,7 +108,7 @@ const SubjectsService = {
             return res.status(200).json({
                 success: true,
                 message: "Subject created successfully",
-                data: Subjects,
+                data: subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -93,7 +123,22 @@ const SubjectsService = {
 
     async updateSubject(req: Request, res: Response): Promise<string | any> {
         try {
-            const Subjects = await PrismaDb.subject.update({
+
+            const subject = await PrismaDb.subject.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!subject) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Subject not found",
+                    data: [],
+                });
+            }
+
+            const subjects = await PrismaDb.subject.update({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -108,7 +153,7 @@ const SubjectsService = {
             return res.status(200).json({
                 success: true,
                 message: "Subject updated successfully",
-                data: Subjects,
+                data: subjects,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -123,6 +168,21 @@ const SubjectsService = {
 
     async deleteSubject(req: Request, res: Response): Promise<string | any> {
         try {
+
+            const subject = await PrismaDb.subject.findUnique({
+                where: {
+                    uuid: req.params.uuid,
+                },
+            });
+
+            if (!subject) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Subject not found",
+                    data: [],
+                });
+            }
+
             await PrismaDb.subject.delete({
                 where: {
                     uuid: req.params.uuid,

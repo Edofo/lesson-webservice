@@ -32,7 +32,7 @@ const GradesService = {
 
     async getGradeByUuid(req: Request, res: Response): Promise<string | any> {
         try {
-            const grades = await PrismaDb.grade.findUnique({
+            const grade = await PrismaDb.grade.findUnique({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -45,7 +45,7 @@ const GradesService = {
             return res.status(200).json({
                 success: true,
                 message: "Grade retrieved successfully",
-                data: grades,
+                data: grade,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -61,13 +61,59 @@ const GradesService = {
     async createGrade(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const acceptedFields = ["value",  "studentUuid", "subjectUuid", "teacherUuid"];
+            const acceptedFields = ["value", "studentUuid", "subjectUuid", "teacherUuid"];
 
             if (missingValues(req, res, acceptedFields) !== true) {
                 return;
             }
+
+            // Check if student exists
+            const student = await PrismaDb.student.findUnique({
+                where: {
+                    uuid: req.body.studentUuid,
+                }
+            });
+
+            if (!student) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Student not found",
+                    data: [],
+                });
+            }
+            
+
+            // Check if subject exists
+            const subject = await PrismaDb.subject.findUnique({
+                where: {
+                    uuid: req.body.subjectUuid,
+                }
+            });
+
+            if (!subject) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Subject not found",
+                    data: [],
+                });
+            }
+
+            // Check if teacher exists  
+            const teacher = await PrismaDb.teacher.findUnique({
+                where: {
+                    uuid: req.body.teacherUuid,
+                }
+            });
+
+            if (!teacher) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Teacher not found",
+                    data: [],
+                });
+            }
         
-            const Grades = await PrismaDb.grade.create({
+            const grades = await PrismaDb.grade.create({
                 data: {
                     value: req.body.value,
                     date: req.body.date || new Date(),
@@ -84,7 +130,7 @@ const GradesService = {
             return res.status(200).json({
                 success: true,
                 message: "Grade created successfully",
-                data: Grades,
+                data: grades,
             });
         } catch (error: any) {
             return res.status(500).json({

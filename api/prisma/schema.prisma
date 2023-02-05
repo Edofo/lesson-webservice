@@ -71,7 +71,7 @@ model Subject {
 
 model Grade {
   uuid  String   @id @default(uuid())
-  value Decimal  @db.Decimal(2, 2)
+  value Float  
   date  DateTime @db.Date
 
   studentUuid String

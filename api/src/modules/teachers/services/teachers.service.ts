@@ -4,21 +4,22 @@ import hash from "../../../helpers/hash/hash";
 import missingValues from "../../../helpers/missingValues";
 import PrismaDb from "../../../models/prisma";
 
-const StudentsService = {
-    async getAllStudents(req: Request, res: Response): Promise<string | any> {
+const TeachersService = {
+    async getAllTeachers(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const students = await PrismaDb.student.findMany({
+            const teachers = await PrismaDb.teacher.findMany({
                 include: {
-                    class: true,
+                    classes: true,
                     grades: true,
+                    subjects: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Students retrieved successfully",
-                data: students,
+                message: "Teachers retrieved successfully",
+                data: teachers,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -31,23 +32,24 @@ const StudentsService = {
         }
     },
 
-    async getStudentByUuid(req: Request, res: Response): Promise<string | any> {
+    async getTeacherByUuid(req: Request, res: Response): Promise<string | any> {
         try {
             
-            const student = await PrismaDb.student.findUnique({
+            const teacher = await PrismaDb.teacher.findUnique({
                 where: {
                     uuid: req.params.uuid,
                 },
                 include: {
-                    class: true,
+                    classes: true,
                     grades: true,
+                    subjects: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student retrieved successfully",
-                data: student,
+                message: "Teacher retrieved successfully",
+                data: teacher,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -60,7 +62,7 @@ const StudentsService = {
         }
     },
 
-    async createStudent(req: Request, res: Response): Promise<string | any> {
+    async createTeacher(req: Request, res: Response): Promise<string | any> {
         try {
             
             const acceptedFields = ["name", "email", "password"];
@@ -71,23 +73,23 @@ const StudentsService = {
             
             const hashPwd = await hash(req.body.password)
 
-            const students = await PrismaDb.student.create({
+            const teacher = await PrismaDb.teacher.create({
                 data: {
                     name: req.body.name,
                     email: req.body.email,
                     password: hashPwd,
-                    classUuid: req.body.classUuid || null,
                 },
                 include: {
-                    class: true,
+                    classes: true,
                     grades: true,
+                    subjects: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student created successfully",
-                data: students,
+                message: "Teacher created successfully",
+                data: teacher,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -100,25 +102,25 @@ const StudentsService = {
         }
     },
 
-    async updateStudent(req: Request, res: Response): Promise<string | any> {
+    async updateTeacher(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const student = await PrismaDb.student.findUnique({
+            const teacher = await PrismaDb.teacher.findUnique({
                 where: {
                     uuid: req.params.uuid,
 
                 },
             });
 
-            if (!student) {
+            if (!teacher) {
                 return res.status(404).json({
                     success: false,
-                    message: "Student not found",
+                    message: "Teacher not found",
                     data: [],
                 });
             }
 
-            const students = await PrismaDb.student.update({
+            const teachers = await PrismaDb.teacher.update({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -126,15 +128,16 @@ const StudentsService = {
                     ...req.body 
                 },
                 include: {
-                    class: true,
+                    classes: true,
                     grades: true,
+                    subjects: true,
                 }
             });
 
             return res.status(200).json({
                 success: true,
-                message: "Student updated successfully",
-                data: students,
+                message: "Teacher updated successfully",
+                data: teachers,
             });
         } catch (error: any) {
             return res.status(500).json({
@@ -147,25 +150,25 @@ const StudentsService = {
         }
     },
 
-    async deleteStudent(req: Request, res: Response): Promise<string | any> {
+    async deleteTeacher(req: Request, res: Response): Promise<string | any> {
         try {
 
-            const student = await PrismaDb.student.findUnique({
+            const teacher = await PrismaDb.teacher.findUnique({
                 where: {
                     uuid: req.params.uuid,
 
                 },
             });
 
-            if (!student) {
+            if (!teacher) {
                 return res.status(404).json({
                     success: false,
-                    message: "Student not found",
+                    message: "Teacher not found",
                     data: [],
                 });
             }
 
-            await PrismaDb.student.delete({
+            await PrismaDb.teacher.delete({
                 where: {
                     uuid: req.params.uuid,
                 },
@@ -173,7 +176,7 @@ const StudentsService = {
 
             return res.status(200).json({
                 success: true,
-                message: "Student deleted successfully",
+                message: "Teacher deleted successfully",
                 data: [],
             });
         } catch (error: any) {
@@ -188,4 +191,4 @@ const StudentsService = {
     },
 };
 
-export default StudentsService;
+export default TeachersService;
