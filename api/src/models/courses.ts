@@ -10,6 +10,16 @@ const CoursesSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    Classes: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Classes",
+    },
+    Notes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Notes",
+        }
+    ]
 });
 
 export default CoursesSchema;
