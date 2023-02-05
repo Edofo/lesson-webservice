@@ -35,11 +35,7 @@ const ClassesService = {
         try {
             const model = getModel();
 
-            const id = new ObjectId(req.params.id);
-
-            console.log(id);
-
-            const classes = await model.findById(id);
+            const classes = await model.findById(req.params.id);
 
             return res.status(200).json({
                 success: true,

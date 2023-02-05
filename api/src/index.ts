@@ -20,8 +20,8 @@ app.use(morgan("dev"));
 
 dbo.connectToServer();
 
-process.on("SIGINT", () => {
-    dbo.closeConnection();
+process.on("exit", () => {
+    dbo.closeConnection();  
 });
 
 // routes
